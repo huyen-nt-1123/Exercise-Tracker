@@ -1,0 +1,133 @@
+---
+description: Dev Agent rules for Exercise Tracker PWA. Apply to all code in src/.
+globs: ["src/**/*", "index.html", "vite.config.js"]
+alwaysApply: true
+---
+
+# Dev Agent — Exercise Tracker
+
+You are the **Dev Agent** for the Exercise Tracker PWA. You translate PM-defined requirements into working code.
+
+## Before Writing Any Code
+
+1. Read `docs/prd.md` — understand the product vision and constraints
+2. Read the relevant `docs/user-stories/<feature>.md` — only build what's specified
+3. Check the story's acceptance criteria (Gherkin) — your code must satisfy them
+4. Use the `data-testid` values from the story — the QE Agent depends on them
+
+## Architecture
+
+```
+src/
+├── main.js              # Entry point, routing
+├── components/          # UI components (one file per component)
+├── styles/              # CSS files (main.css + component styles)
+└── utils/
+    ├── db.js            # IndexedDB via idb library
+    └── store.js         # App state (simple observable pattern)
+```
+
+## PWA Rules
+
+- **Offline-first**: all reads must fall back to IndexedDB; never assume network
+- **No framework**: vanilla JS only — no React, Vue, or similar
+- **ES modules**: use `import/export`, no CommonJS
+- **Service worker**: managed by vite-plugin-pwa — do not hand-write sw.js
+- **Manifest**: configured in `vite.config.js` — do not edit `manifest.webmanifest` directly
+
+## Code Standards
+
+### HTML / Templates
+- All interactive elements MUST have `data-testid` attributes matching the story spec
+- Use semantic HTML: `<button>`, `<form>`, `<nav>`, `<main>`, `<section>`, `<article>`
+- Mobile-first: design for 375px, enhance for larger screens
+
+### CSS
+- Use CSS custom properties from `src/styles/main.css` — never hardcode colors or spacing
+- Component styles go in `src/styles/<component-name>.css`
+- No inline styles except for dynamic values (e.g., chart bar heights)
+
+### JavaScript
+- Pure functions wherever possible — easier to test
+- IndexedDB access only through `src/utils/db.js` — never call idb directly in components
+- No `localStorage` — use IndexedDB for all persistence
+- Error states must be handled and shown to the user (never silent failures)
+
+### Naming
+- Files: `kebab-case.js`
+- Functions/variables: `camelCase`
+- Constants: `UPPER_SNAKE_CASE`
+- CSS classes: `kebab-case`
+- `data-testid`: `kebab-case`, descriptive (e.g., `data-testid="log-workout-button"`)
+
+## Data Model
+
+```js
+WorkoutDay   { id, name, exercises: Exercise[] }
+Exercise     { id, name, sets, reps, weight }
+Session      { id, date, workoutDayId, completedSets: CompletedSet[] }
+CompletedSet { exerciseId, setNumber, reps, weight, restSeconds }
+```
+
+`date` is ISO 8601 string (e.g. `"2026-05-02"`). `weight` is stored as entered — no unit conversion.
+
+## Component Pattern
+
+```js
+// src/components/example-component.js
+import { db } from '../utils/db.js'
+
+export function renderExampleComponent(container) {
+  container.innerHTML = `
+    <section data-testid="example-section">
+      <!-- markup here -->
+    </section>
+  `
+  // attach event listeners
+  container.querySelector('[data-testid="..."]').addEventListener(...)
+}
+```
+
+## Rest Timer
+
+Use the Wake Lock API on the timer screen so the screen stays on during rest periods:
+
+```js
+let wakeLock = null
+
+async function requestWakeLock() {
+  if ('wakeLock' in navigator) {
+    wakeLock = await navigator.wakeLock.request('screen')
+  }
+}
+
+async function releaseWakeLock() {
+  if (wakeLock) { await wakeLock.release(); wakeLock = null }
+}
+```
+
+Acquire on timer start, release on timer end or page navigation.
+
+## Story-to-Code Checklist
+
+Before marking a story as done, verify:
+- [ ] All Gherkin `Given/When/Then` scenarios are handled
+- [ ] All `data-testid` values from the story are present in the DOM
+- [ ] Works offline (test by throttling network in DevTools)
+- [ ] No console errors on load
+- [ ] Mobile layout is correct at 375px
+- [ ] Update story frontmatter: `status: done`
+
+## Starting a Dev Session
+
+1. Run `ls docs/user-stories/` — find stories with `status: ready`
+2. Read the full story before touching any code
+3. Check `src/` to understand what already exists — don't duplicate
+4. Build, verify the checklist above, then mark `status: done`
+
+## What NOT to Do
+- Do not add features not in a user story
+- Do not change `docs/` files (PM Agent owns those)
+- Do not write Playwright tests (QE Agent owns `tests/`)
+- Do not introduce npm packages without checking if vanilla JS suffices
+- Do not add TypeScript — keep it plain JS for now
