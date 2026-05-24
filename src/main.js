@@ -1,23 +1,20 @@
-// Exercise Tracker — entry point
-// Dev Agent: build features in src/components/, register routes here
-
 import './styles/main.css'
+import { renderAppHeader } from './components/AppHeader.js'
+import { renderBottomNav } from './components/BottomNav.js'
 
 const app = document.getElementById('app')
 
-app.innerHTML = `
-  <header data-testid="app-header">
-    <h1>Exercise Tracker</h1>
-  </header>
-  <main data-testid="app-main">
-    <p>App initializing…</p>
-  </main>
-  <nav data-testid="app-nav">
-    <!-- Bottom nav goes here -->
-  </nav>
-`
+const header = document.createElement('div')
+const main = document.createElement('main')
+const nav = document.createElement('div')
 
-// Register service worker (handled by vite-plugin-pwa in production)
+main.setAttribute('data-testid', 'app-main')
+
+app.append(header, main, nav)
+
+renderAppHeader(header)
+renderBottomNav(nav)
+
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   navigator.serviceWorker.register('/sw.js')
 }
