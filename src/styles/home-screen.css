@@ -1,0 +1,122 @@
+.home-screen {
+  padding: var(--page-margin);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ── Empty state ── */
+
+.home-empty-state {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.home-empty__headline {
+  font-family: var(--font-heading);
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-on-surface);
+}
+
+.home-empty__subtext {
+  font-size: var(--text-body-md-size);
+  color: var(--color-on-surface-variant);
+  line-height: 1.5;
+}
+
+/* ── Bento cards ── */
+
+.home-bento-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.home-bento-card {
+  border-radius: var(--radius-2xl);
+  background: var(--color-surface-container-lowest);
+  border: 2px solid var(--color-outline-variant);
+  padding: var(--space-2);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-height: 120px;
+  transition: transform var(--duration-fast) var(--ease-bounce);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.home-bento-card:active {
+  transform: scale(0.96);
+}
+
+.home-bento-card__title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--text-body-lg-size);
+  color: var(--color-on-surface);
+}
+
+.home-bento-card__subtitle {
+  font-size: 0.8125rem;
+  color: var(--color-on-surface-variant);
+  line-height: 1.4;
+}
+
+/* ── Illustration ── */
+
+.home-illustration {
+  border-radius: var(--radius-2xl);
+  background: var(--color-surface-container-low);
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.home-illustration__bubble {
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--color-primary-container), var(--color-primary));
+  opacity: 0.3;
+  position: absolute;
+  top: -20px;
+  right: -20px;
+}
+
+.home-illustration__text {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: var(--color-primary);
+  letter-spacing: -0.01em;
+  z-index: 1;
+}
+
+/* ── CTA ── */
+
+.home-cta {
+  padding-top: var(--space-2);
+}
+
+/* ── Has-routines placeholder ── */
+
+.home-has-routines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.home-has-routines__heading {
+  font-family: var(--font-heading);
+  font-size: var(--text-headline-md-size);
+  font-weight: var(--text-headline-md-weight);
+  color: var(--color-on-surface);
+}

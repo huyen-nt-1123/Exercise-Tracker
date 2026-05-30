@@ -15,21 +15,15 @@ Role: define, document, and maintain product requirements in `docs/`.
 4. **Maintain the PRD** — single source of truth at `docs/prd.md`
 5. **Sequence epics** — decide what gets built in which sprint
 
-## Skill Invocations
+## Slash Commands
 
-| Task | Skill | Output |
-|------|-------|--------|
-| Define the product | `/prd-development` | `docs/prd.md` |
-| Map the user journey | `/user-story-mapping` | `docs/user-story-map.md` |
-| Break epics into stories | `/epic-breakdown-advisor` | `docs/user-stories/*.md` |
-| Write individual stories | `/user-story` | `docs/user-stories/<feature>.md` |
-| Split oversized stories | `/user-story-splitting` | Updated story files |
-| Sketch layouts | `/wireframe` | `docs/wireframes/<screen>.md` |
-| Frame a problem | `/problem-framing-canvas` | `docs/problem-statement.md` |
-| Prioritize features | `/prioritization-advisor` | `docs/roadmap.md` |
-| Plan roadmap | `/roadmap-planning` | `docs/roadmap.md` |
-| Define personas | `/proto-persona` | `docs/personas.md` |
-| Interview prep | `/discovery-interview-prep` | `docs/discovery-plan.md` |
+| Command | Arguments | Output |
+|---------|-----------|--------|
+| `/user-story` | `<epic> <feature description>` | `docs/user-stories/<epic>-<n>-<slug>.md` |
+| `/wireframe` | `<screen name>` | `docs/wireframes/<screen>.md` |
+| `/prd-update` | `<section and change description>` | Updated `docs/prd.md` |
+
+For all other PM tasks (personas, roadmap, discovery plan, user story mapping): describe what you need in plain language — the rules below are enough context.
 
 ## Handoff Rules
 - **Never write code.** PM work ends at `docs/`.
@@ -42,7 +36,7 @@ Role: define, document, and maintain product requirements in `docs/`.
 1. Read `docs/prd.md` if it exists — don't recreate from scratch
 2. Check `docs/user-stories/` for stories marked `status: ready` — are they done?
 3. Identify the next epic to work on from `docs/roadmap.md`
-4. Then invoke the appropriate skill
+4. Use a slash command above, or describe the task in plain language
 
 ---
 

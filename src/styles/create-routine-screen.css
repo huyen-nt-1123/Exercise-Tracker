@@ -1,0 +1,339 @@
+.create-routine-screen {
+  padding: var(--page-margin);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ── Screen header ── */
+
+.create-routine__header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.create-routine__label {
+  font-family: var(--font-heading);
+  font-size: var(--text-label-caps-size);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.create-routine__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-headline-md-size);
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+/* ── Routine name card ── */
+
+.routine-name-card {
+  background: var(--color-surface-container-lowest);
+  border-radius: var(--radius-2xl);
+  border: 2px solid var(--color-outline-variant);
+  padding: var(--space-2) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  box-shadow: var(--shadow-1);
+}
+
+.routine-name-card__label {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-on-surface-variant);
+  letter-spacing: 0.03em;
+}
+
+.routine-name-card__input {
+  width: 100%;
+  min-height: var(--touch-target-min);
+  padding: 10px var(--space-2);
+  border: 2px solid var(--color-outline-variant);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-container-low);
+  color: var(--color-on-surface);
+  font-family: var(--font-body);
+  font-size: var(--text-body-md-size);
+  outline: none;
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.routine-name-card__input::placeholder {
+  color: var(--color-outline);
+}
+
+.routine-name-card__input:focus {
+  border-color: var(--color-primary);
+}
+
+.routine-name-card__input--error {
+  border-color: var(--color-error);
+}
+
+.routine-name-card__error {
+  font-size: 0.8125rem;
+  color: var(--color-error);
+  display: none;
+}
+
+.routine-name-card__error--visible {
+  display: block;
+}
+
+/* ── Plan targets section ── */
+
+.plan-targets-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.plan-targets__header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.plan-targets__heading {
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+.plan-targets__subtext {
+  font-size: 0.875rem;
+  color: var(--color-on-surface-variant);
+}
+
+/* ── Exercise target card ── */
+
+.exercise-target-card {
+  background: var(--color-surface-container-lowest);
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--color-outline-variant);
+  padding: var(--space-2) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  box-shadow: var(--shadow-1);
+}
+
+.exercise-target-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-1);
+}
+
+.exercise-target-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.exercise-target-card__name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--text-body-lg-size);
+  color: var(--color-on-surface);
+}
+
+.exercise-target-card__muscle {
+  font-size: var(--text-label-caps-size);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  opacity: 0.7;
+}
+
+.exercise-target-card__remove {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-on-surface-variant);
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: 4px;
+  border-radius: var(--radius-full);
+  min-width: 32px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--duration-fast) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.exercise-target-card__remove:active {
+  background: var(--color-surface-container-high);
+}
+
+/* ── Stepper row ── */
+
+.exercise-target-card__steppers {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.stepper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.stepper__label {
+  font-family: var(--font-heading);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-on-surface-variant);
+}
+
+.stepper__control {
+  display: flex;
+  align-items: center;
+  background: var(--color-surface-container-low);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  width: 100%;
+}
+
+.stepper__btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-on-surface);
+  min-width: 40px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--duration-fast) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stepper__btn:active {
+  background: var(--color-surface-container-high);
+}
+
+.stepper__value {
+  flex: 1;
+  width: 0;
+  text-align: center;
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-on-surface);
+  background: transparent;
+  border: none;
+  outline: none;
+  min-width: 0;
+  padding: 0 4px;
+}
+
+/* ── Empty state placeholder card ── */
+
+.exercise-empty-state {
+  border-radius: var(--radius-2xl);
+  border: 2px dashed var(--color-outline-variant);
+  background: var(--color-surface-container-low);
+  padding: var(--space-4) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  text-align: center;
+}
+
+.exercise-empty-state__primary {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--text-body-lg-size);
+  color: var(--color-on-surface);
+}
+
+.exercise-empty-state__secondary {
+  font-size: 0.875rem;
+  color: var(--color-on-surface-variant);
+}
+
+/* ── Add Exercises button ── */
+
+.add-exercises-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: var(--touch-target-min);
+  padding: var(--space-1) var(--space-3);
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--color-secondary-container);
+  color: var(--color-on-secondary);
+  font-family: var(--font-heading);
+  font-size: var(--text-body-lg-size);
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  box-shadow: 0 4px 14px 0 rgba(23, 48, 230, 0.25);
+  transition:
+    transform var(--duration-fast) var(--ease-bounce),
+    box-shadow var(--duration-fast) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.add-exercises-btn:active {
+  transform: scale(0.97);
+  box-shadow: var(--shadow-1);
+}
+
+/* ── Save button area ── */
+
+.save-routine-area {
+  padding-bottom: var(--space-2);
+}
+
+/* ── Success toast ── */
+
+.save-success-toast {
+  position: fixed;
+  top: calc(var(--space-2) + env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 12px var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-family: var(--font-heading);
+  font-size: var(--text-label-caps-size);
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: var(--shadow-2);
+  z-index: 200;
+  animation: toast-in var(--duration-normal) var(--ease-bounce);
+}
+
+@keyframes toast-in {
+  from { transform: translateX(-50%) translateY(-16px); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
