@@ -1,0 +1,42 @@
+/* Shared floating action button (story 007). One element, one appearance;
+   only the icon and action change by context. Sits above the bottom nav. */
+
+.app-fab {
+  position: fixed;
+  right: var(--page-margin);
+  bottom: calc(64px + env(safe-area-inset-bottom) + var(--space-3));
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+  cursor: pointer;
+  z-index: 60;
+  /* Soft green glow from the Figma FAB style (node 76:199). */
+  box-shadow:
+    0 8px 10px rgba(45, 235, 144, 0.1),
+    0 10px 25px rgba(45, 235, 144, 0.2);
+  transition:
+    transform var(--duration-fast) var(--ease-bounce),
+    box-shadow var(--duration-fast) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app-fab:active {
+  transform: scale(0.92);
+}
+
+.app-fab:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+.app-fab__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

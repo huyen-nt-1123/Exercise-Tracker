@@ -1,5 +1,13 @@
 import '../styles/home-screen.css'
 import { getAllRoutines } from '../utils/db.js'
+import { store } from '../utils/store.js'
+
+// Enter routine build mode inside the Library ROUTINES tab (story 006).
+function enterBuildMode() {
+  store.buildingRoutine = true
+  store.libraryTab = 'routines'
+  location.hash = '#/library'
+}
 
 export async function renderHomeScreen(container) {
   const routines = await getAllRoutines()
@@ -51,17 +59,9 @@ function renderEmptyState(container) {
     </div>
   `
 
-  container.querySelector('[data-testid="build-first-workout-btn"]').addEventListener('click', () => {
-    location.hash = '#/create-routine'
-  })
-
-  container.querySelector('[data-testid="quick-start-card"]').addEventListener('click', () => {
-    location.hash = '#/create-routine'
-  })
-
-  container.querySelector('[data-testid="ai-generator-card"]').addEventListener('click', () => {
-    location.hash = '#/create-routine'
-  })
+  container.querySelector('[data-testid="build-first-workout-btn"]').addEventListener('click', enterBuildMode)
+  container.querySelector('[data-testid="quick-start-card"]').addEventListener('click', enterBuildMode)
+  container.querySelector('[data-testid="ai-generator-card"]').addEventListener('click', enterBuildMode)
 }
 
 function renderHasRoutines(container, routines) {

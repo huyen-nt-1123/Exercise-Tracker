@@ -2,7 +2,7 @@
 epic: routine-builder
 story: 001
 title: View home empty state and start building first routine
-status: ready
+status: done
 ---
 
 ## Story
@@ -43,9 +43,13 @@ And the bottom navigation bar is visible with Home active
 ```gherkin
 Given the user is on the Home empty state screen
 When they tap the "Build Your First Workout" button
-Then they are navigated to the Create Routine screen
-And the screen heading reads "NEW PROGRAM / Create Routine"
+Then they are navigated to the Library ROUTINES tab in build view (story 006)
+And the build view heading reads "NEW PROGRAM / Create Routine"
 ```
+
+> Navigation note (story 006): Create Routine is no longer a standalone screen — it
+> is the build view inside the Library ROUTINES tab. "Build Your First Workout" enters
+> that build view rather than a separate `#/create-routine` route.
 
 ### Scenario 3: Tapping "Quick Start" begins a blank session
 ```gherkin

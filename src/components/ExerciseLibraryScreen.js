@@ -1,7 +1,8 @@
 import '../styles/exercise-library-screen.css'
 import { getAllExercises, searchExercises, getAllRoutines } from '../utils/db.js'
-import { store } from '../utils/store.js'
+import { store, emitChange } from '../utils/store.js'
 import { EXERCISES_SEED } from '../utils/exercises-seed.js'
+import { renderRoutineBuildView } from './CreateRoutineScreen.js'
 
 function chipClass(category) {
   const map = { chest: 'chest', back: 'back', legs: 'legs', shoulders: 'shoulders', arms: 'arms' }
@@ -183,18 +184,38 @@ function attachPlanBtns(content) {
   })
 }
 
-async function renderRoutinesTab(content) {
+// The ROUTINES tab toggles between the saved-routines list (default) and the
+// in-place build view used to create a routine (story 006).
+async function renderRoutinesTab(content, switchTab) {
+  if (store.buildingRoutine) {
+    content.innerHTML = `<div class="library-routines-view" data-testid="library-routines-build-view"></div>`
+    const buildView = content.querySelector('[data-testid="library-routines-build-view"]')
+    renderRoutineBuildView(buildView, {
+      onGoToExercises: () => switchTab('exercises'),
+      onExitToList: () => switchTab('routines'),
+    })
+    return
+  }
+
   const routines = await getAllRoutines()
+  const hasRoutines = routines.length > 0
 
   content.innerHTML = `
-    <span class="routines-section-title">My Saved Workouts</span>
-    <div class="routines-list" data-testid="routines-list">
-      ${routines.length > 0
-        ? routines.map(r => renderRoutineCard(r)).join('')
-        : `<p style="color: var(--color-on-surface-variant); text-align: center; padding: var(--space-4)">
-             No routines yet. Build your first one!
-           </p>`
-      }
+    <div class="library-routines-view" data-testid="library-routines-list-view">
+      <span class="routines-section-title">My Saved Workouts</span>
+      ${hasRoutines ? `
+        <div class="routines-list" data-testid="routines-list">
+          ${routines.map(r => renderRoutineCard(r)).join('')}
+        </div>
+      ` : `
+        <div class="routines-empty-state" data-testid="routines-empty-state">
+          <span class="routines-empty-state__primary">No routines yet</span>
+          <span class="routines-empty-state__secondary">Build your first one to get started.</span>
+          <button class="btn btn-primary" data-testid="build-routine-btn" type="button">
+            Build a Routine
+          </button>
+        </div>
+      `}
     </div>
   `
 
@@ -203,6 +224,15 @@ async function renderRoutinesTab(content) {
       location.hash = '#/'
     })
   })
+
+  const buildBtn = content.querySelector('[data-testid="build-routine-btn"]')
+  if (buildBtn) {
+    buildBtn.addEventListener('click', () => {
+      store.buildingRoutine = true
+      emitChange()
+      switchTab('routines')
+    })
+  }
 }
 
 export async function renderExerciseLibraryScreen(container) {
@@ -234,6 +264,9 @@ export async function renderExerciseLibraryScreen(container) {
 
   async function switchTab(tab) {
     store.libraryTab = tab
+    // Notify the shared FAB, whose icon/visibility depends on the active tab
+    // while a routine is being built (story 007).
+    emitChange()
     container.querySelectorAll('.library-tab').forEach(btn => {
       const active = btn.dataset.tab === tab
       btn.classList.toggle('library-tab--active', active)
@@ -243,7 +276,7 @@ export async function renderExerciseLibraryScreen(container) {
     if (tab === 'exercises') {
       await renderExercisesTab(content, exercises)
     } else {
-      await renderRoutinesTab(content)
+      await renderRoutinesTab(content, switchTab)
     }
   }
 

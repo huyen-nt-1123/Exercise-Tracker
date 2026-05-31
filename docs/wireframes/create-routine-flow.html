@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FLEXLOG — Create Routine Flow (Wireframe)</title>
+<style>
+  /* ── Kinetic Bubble tokens (from docs/design.md) ── */
+  :root {
+    --surface:#f2fcf1; --surface-low:#edf6eb; --surface-c:#e7f0e6;
+    --white:#ffffff; --on:#151e17; --on-var:#3b4a3f;
+    --outline:#6b7b6e; --outline-v:#bacbbc;
+    --primary:#006d3e; --on-primary:#fff; --primary-c:#2deb90; --on-primary-c:#006539;
+    --secondary:#3b50fe; --tertiary:#b4126b; --tertiary-c:#ffbcd3;
+    --error:#ba1a1a; --error-c:#ffdad6;
+    --radius:22px; --radius-lg:30px;
+    --shadow:0 8px 24px rgba(0,0,0,.10);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+    background:#cdd8cc; color:var(--on); padding:32px 16px 64px;
+  }
+  h1.title { text-align:center; font-weight:800; letter-spacing:-.5px; margin-bottom:4px; }
+  p.lede { text-align:center; color:var(--on-var); margin-bottom:28px; font-size:14px; }
+
+  /* ── Flow rail of phones ── */
+  .rail { display:flex; gap:40px; overflow-x:auto; padding:8px 8px 24px; justify-content:flex-start; }
+  .step { flex:0 0 auto; position:relative; }
+  .step-label {
+    font-weight:700; font-size:12px; letter-spacing:1px; text-transform:uppercase;
+    color:var(--primary); margin-bottom:8px; text-align:center;
+  }
+  .step::after {
+    content:"→"; position:absolute; right:-30px; top:50%; transform:translateY(-50%);
+    font-size:28px; color:var(--primary); font-weight:800;
+  }
+  .step:last-child::after { content:""; }
+
+  /* ── Phone frame ── */
+  .phone {
+    width:340px; height:712px; background:var(--surface); border-radius:38px;
+    box-shadow:var(--shadow),0 0 0 10px #1d2a20, 0 0 0 12px #34433a;
+    overflow:hidden; display:flex; flex-direction:column; position:relative;
+  }
+  .screen { flex:1; overflow-y:auto; padding:0 0 76px; }
+  .screen::-webkit-scrollbar { width:0; }
+
+  /* ── App header ── */
+  .appbar { display:flex; align-items:center; gap:10px; padding:18px 20px 10px; }
+  .avatar { width:34px; height:34px; border-radius:50%; background:var(--primary-c);
+    border:2px solid var(--primary); }
+  .wordmark { font-weight:800; letter-spacing:2px; font-size:15px; color:var(--primary); }
+  .badge-offline { margin-left:auto; font-size:9px; font-weight:700; letter-spacing:.5px;
+    background:var(--surface-c); color:var(--on-var); padding:4px 8px; border-radius:999px; }
+
+  .body { padding:6px 20px; }
+  .label-caps { font-size:11px; font-weight:800; letter-spacing:2px; color:var(--secondary); }
+  .headline { font-weight:800; font-size:26px; line-height:1.15; letter-spacing:-.5px; margin:4px 0 6px; }
+  .subtext { color:var(--on-var); font-size:14px; line-height:1.5; margin-bottom:18px; }
+  .section-h { font-weight:800; font-size:15px; margin:18px 0 2px; }
+  .section-sub { color:var(--on-var); font-size:12px; margin-bottom:10px; }
+
+  /* ── Buttons ── */
+  .btn { width:100%; border:none; border-radius:var(--radius); padding:16px;
+    font-family:inherit; font-weight:800; font-size:15px; cursor:pointer; letter-spacing:.3px;
+    transition:transform .08s ease, filter .15s ease; }
+  .btn:active { transform:scale(.97); }
+  .btn-primary { background:var(--primary); color:var(--on-primary); }
+  .btn-accent { background:var(--primary-c); color:var(--on-primary-c); }
+  .btn-secondary { background:var(--white); color:var(--primary); border:2px solid var(--outline-v); }
+  .btn-ghost { background:var(--surface-c); color:var(--on); }
+  .btn-row { display:flex; gap:10px; margin-top:14px; }
+  .btn-row .btn { flex:1; }
+
+  /* ── Cards ── */
+  .card { background:var(--white); border-radius:var(--radius); padding:16px; box-shadow:0 2px 8px rgba(0,0,0,.05); margin-bottom:12px; }
+  .bento { display:flex; gap:12px; margin:18px 0; }
+  .bento .card { flex:1; margin:0; cursor:pointer; border:1px solid var(--outline-v); }
+  .bento h4 { font-size:14px; font-weight:800; margin-bottom:4px; }
+  .bento p { font-size:11px; color:var(--on-var); line-height:1.4; }
+  .illus { height:120px; border-radius:var(--radius); margin:8px 0 16px;
+    background:linear-gradient(135deg,var(--primary-c),#58ffa5); display:flex;
+    align-items:center; justify-content:center; font-size:42px; }
+
+  /* ── Inputs ── */
+  .field-label { font-size:12px; font-weight:700; color:var(--on-var); margin-bottom:6px; display:block; }
+  .pill-input { width:100%; border:2px solid var(--outline-v); border-radius:999px;
+    padding:14px 18px; font-family:inherit; font-size:15px; background:var(--white); outline:none; }
+  .pill-input:focus { border-color:var(--primary); }
+  .err { color:var(--error); font-size:12px; font-weight:700; margin-top:6px; display:none; }
+  .err.show { display:block; }
+
+  .empty-box { border:2px dashed var(--outline-v); border-radius:var(--radius);
+    padding:28px 16px; text-align:center; color:var(--on-var); }
+  .empty-box strong { display:block; font-size:14px; color:var(--on); margin-bottom:4px; }
+  .empty-box span { font-size:12px; }
+
+  /* ── Tabs ── */
+  .tabs { display:flex; gap:8px; padding:10px 20px 4px; }
+  .tab { flex:1; text-align:center; padding:10px; border-radius:999px; font-weight:800;
+    font-size:12px; letter-spacing:1px; cursor:pointer; background:var(--surface-c); color:var(--on-var); }
+  .tab.active { background:var(--primary); color:var(--on-primary); }
+
+  .search { display:flex; gap:8px; padding:4px 20px 10px; }
+  .search input { flex:1; border:2px solid var(--outline-v); border-radius:999px;
+    padding:11px 16px; font-family:inherit; font-size:13px; outline:none; }
+  .search input:focus { border-color:var(--primary); }
+  .filter-btn { width:44px; border-radius:14px; border:2px solid var(--outline-v);
+    background:var(--white); font-size:16px; cursor:pointer; }
+  .results { font-size:12px; color:var(--on-var); padding:0 20px 8px; font-weight:600; }
+
+  /* ── Exercise library cards ── */
+  .ex-card { background:var(--white); border-radius:var(--radius); padding:14px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .ex-top { display:flex; justify-content:space-between; align-items:flex-start; }
+  .ex-name { font-weight:800; font-size:15px; }
+  .chip { display:inline-block; background:var(--surface-c); color:var(--on-var);
+    font-size:10px; font-weight:700; padding:4px 9px; border-radius:999px; margin-top:5px; }
+  .ex-hint { font-size:11px; color:var(--secondary); font-weight:700; margin-top:6px; }
+  .ex-bottom { display:flex; align-items:center; gap:8px; margin-top:12px; }
+  .mini-pill { background:var(--surface-low); border-radius:999px; padding:6px 10px;
+    font-size:11px; font-weight:700; color:var(--on-var); }
+  .plan-btn { margin-left:auto; background:var(--primary-c); color:var(--on-primary-c);
+    border:none; border-radius:999px; padding:8px 18px; font-weight:800; font-size:12px;
+    font-family:inherit; cursor:pointer; }
+  .plan-btn.added { background:var(--primary); color:#fff; }
+
+  /* ── Target / stepper cards ── */
+  .target-card { background:var(--white); border-radius:var(--radius); padding:16px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .target-head { display:flex; justify-content:space-between; align-items:flex-start; }
+  .remove { background:none; border:none; color:var(--error); font-size:18px; cursor:pointer; line-height:1; }
+  .stepper-row { display:flex; gap:14px; margin-top:14px; }
+  .stepper { flex:1; }
+  .stepper > span { font-size:10px; font-weight:800; letter-spacing:1px; color:var(--on-var); }
+  .stepper-ctl { display:flex; align-items:center; gap:6px; margin-top:6px; }
+  .step-btn { width:30px; height:30px; border-radius:50%; border:2px solid var(--outline-v);
+    background:var(--white); font-weight:800; font-size:16px; cursor:pointer; color:var(--primary); }
+  .step-val { min-width:34px; text-align:center; font-weight:800; font-size:17px; }
+
+  /* ── Routine card (saved) ── */
+  .routine-card { background:var(--white); border-radius:var(--radius-lg); padding:18px; margin-bottom:14px; box-shadow:var(--shadow);
+    border-left:6px solid var(--primary-c); cursor:pointer; }
+  .routine-card h3 { font-size:19px; font-weight:800; display:flex; align-items:center; }
+  .routine-card .play { margin-left:auto; background:var(--primary); color:#fff;
+    width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .routine-focus { color:var(--on-var); font-size:13px; margin:6px 0 12px; }
+  .routine-stats { display:flex; gap:10px; }
+  .stat { background:var(--surface-low); border-radius:14px; padding:8px 14px; flex:1; text-align:center; }
+  .stat b { display:block; font-size:18px; font-weight:800; color:var(--primary); }
+  .stat span { font-size:9px; font-weight:700; letter-spacing:.5px; color:var(--on-var); }
+
+  /* ── Tab bar ── */
+  .tabbar { position:absolute; bottom:0; left:0; right:0; height:66px; background:var(--white);
+    border-top:1px solid var(--outline-v); display:flex; align-items:center; justify-content:space-around;
+    padding-bottom:6px; }
+  .tabbar div { font-size:10px; font-weight:700; color:var(--on-var); text-align:center; }
+  .tabbar div.active { color:var(--primary); }
+  .tabbar div i { display:block; font-size:18px; font-style:normal; }
+
+  /* ── Toast ── */
+  .toast { position:absolute; left:50%; top:80px; transform:translateX(-50%) translateY(-20px);
+    background:var(--on); color:#fff; padding:12px 20px; border-radius:999px; font-weight:700;
+    font-size:13px; opacity:0; pointer-events:none; transition:all .3s ease; white-space:nowrap; z-index:5; }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  .hint { text-align:center; font-size:12px; color:var(--on-var); margin-top:6px; }
+  .legend { max-width:760px; margin:36px auto 0; font-size:13px; color:#2a332c;
+    background:rgba(255,255,255,.6); border-radius:16px; padding:16px 22px; line-height:1.7; }
+  .legend code { background:#fff; padding:1px 6px; border-radius:6px; font-size:12px; }
+</style>
+</head>
+<body>
+
+<h1 class="title">FLEXLOG — Create a New Routine</h1>
+<p class="lede">Interactive wireframe · main flow · 375px mobile-first · tap the highlighted elements to move through screens</p>
+
+<div class="rail">
+
+  <!-- ───────── STEP 1: HOME EMPTY STATE ───────── -->
+  <div class="step">
+    <div class="step-label">1 · Home (Empty)</div>
+    <div class="phone">
+      <div class="screen" data-testid="home-empty-state">
+        <div class="appbar"><div class="avatar"></div><div class="wordmark">FLEXLOG</div></div>
+        <div class="body">
+          <div class="illus" aria-hidden="true">🏋️</div>
+          <h2 class="headline" data-testid="home-empty-headline">Your fitness journey starts here.</h2>
+          <p class="subtext" data-testid="home-empty-subtext">You haven't planned any workouts yet. Let's build your first routine.</p>
+          <div class="bento">
+            <div class="card" data-testid="quick-start-card"><h4>Quick Start</h4><p>Log an empty workout session</p></div>
+            <div class="card" data-testid="ai-generator-card"><h4>AI Generator</h4><p>Suggest a routine based on goals</p></div>
+          </div>
+          <button class="btn btn-primary" data-testid="build-first-workout-btn" onclick="go(2)">Build Your First Workout</button>
+          <p class="hint">↑ tap to start the flow</p>
+        </div>
+      </div>
+      <nav class="tabbar" data-testid="bottom-nav">
+        <div class="active"><i>⌂</i>Home</div><div><i>≡</i>Library</div><div><i>↻</i>History</div><div><i>⚙</i>Settings</div>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ───────── STEP 2: CREATE ROUTINE (empty) ───────── -->
+  <div class="step">
+    <div class="step-label">2 · Name Routine</div>
+    <div class="phone">
+      <div class="screen" data-testid="create-routine-screen">
+        <div class="appbar"><div class="avatar"></div><div class="wordmark">FLEXLOG</div></div>
+        <div class="body">
+          <div class="label-caps">NEW PROGRAM</div>
+          <h2 class="headline" data-testid="create-routine-heading">Create Routine</h2>
+          <div class="card">
+            <label class="field-label" data-testid="routine-name-label">Routine Name</label>
+            <input class="pill-input" data-testid="routine-name-input" placeholder="e.g., Push Day" />
+            <div class="err" data-testid="routine-name-error">Please give your routine a name</div>
+          </div>
+          <h3 class="section-h" data-testid="plan-targets-heading">Plan Targets</h3>
+          <p class="section-sub">Set your goals for today's session.</p>
+          <div class="empty-box" data-testid="exercise-list-empty-state">
+            <strong>No exercises added yet</strong><span>Tap below to build your set list</span>
+          </div>
+          <button class="btn btn-secondary" data-testid="add-exercises-btn" onclick="go(3)" style="margin-top:14px;">+ Add Exercises</button>
+          <p class="hint">↑ tap to open the library</p>
+        </div>
+      </div>
+      <nav class="tabbar"><div class="active"><i>⌂</i>Home</div><div><i>≡</i>Library</div><div><i>↻</i>History</div><div><i>⚙</i>Settings</div></nav>
+    </div>
+  </div>
+
+  <!-- ───────── STEP 3: EXERCISE LIBRARY ───────── -->
+  <div class="step">
+    <div class="step-label">3 · Add Exercises</div>
+    <div class="phone">
+      <div class="screen" data-testid="exercise-library-screen">
+        <div class="appbar"><div class="avatar"></div><div class="wordmark">FLEXLOG</div></div>
+        <div class="tabs">
+          <div class="tab" data-testid="routines-tab">ROUTINES</div>
+          <div class="tab active" data-testid="exercises-tab">EXERCISES</div>
+        </div>
+        <div class="search">
+          <input data-testid="exercise-search-input" placeholder="Search exercises..." />
+          <button class="filter-btn" data-testid="exercise-filter-btn">≡</button>
+        </div>
+        <div class="results"><span data-testid="exercise-results-count">48 Results</span></div>
+        <div class="body" style="padding-top:0;">
+          <div class="ex-card" data-testid="exercise-card" data-exercise-id="bench">
+            <div class="ex-top"><div><div class="ex-name" data-testid="exercise-name">Barbell Bench Press</div><span class="chip" data-testid="exercise-muscle-chip">Chest / Triceps</span></div><div style="font-size:20px;color:var(--primary)">+</div></div>
+            <div class="ex-hint" data-testid="exercise-last-hint">Last: 185lbs</div>
+            <div class="ex-bottom"><span class="mini-pill" data-testid="exercise-sets-display">3 Sets</span><span class="mini-pill" data-testid="exercise-reps-display">10 Reps</span><button class="plan-btn" data-testid="exercise-plan-btn" onclick="plan(this)">PLAN</button></div>
+          </div>
+          <div class="ex-card" data-testid="exercise-card" data-exercise-id="ohp">
+            <div class="ex-top"><div><div class="ex-name">Overhead Press</div><span class="chip">Shoulders</span></div><div style="font-size:20px;color:var(--primary)">+</div></div>
+            <div class="ex-bottom"><span class="mini-pill">3 Sets</span><span class="mini-pill">12 Reps</span><button class="plan-btn" onclick="plan(this)">PLAN</button></div>
+          </div>
+          <div class="ex-card" data-testid="exercise-card" data-exercise-id="dips">
+            <div class="ex-top"><div><div class="ex-name">Triceps Dips</div><span class="chip">Arms</span></div><div style="font-size:20px;color:var(--primary)">+</div></div>
+            <div class="ex-bottom"><span class="mini-pill">3 Sets</span><span class="mini-pill">15 Reps</span><button class="plan-btn" onclick="plan(this)">PLAN</button></div>
+          </div>
+          <button class="btn btn-accent" onclick="go(4)" style="margin-top:6px;">Done · Back to Routine</button>
+          <p class="hint">PLAN adds exercises · Done returns</p>
+        </div>
+      </div>
+      <nav class="tabbar"><div><i>⌂</i>Home</div><div class="active"><i>≡</i>Library</div><div><i>↻</i>History</div><div><i>⚙</i>Settings</div></nav>
+    </div>
+  </div>
+
+  <!-- ───────── STEP 4: CREATE ROUTINE w/ targets ───────── -->
+  <div class="step">
+    <div class="step-label">4 · Set Targets · Save</div>
+    <div class="phone">
+      <div class="toast" data-testid="save-routine-success-toast" id="save-toast">✓ Push Day saved</div>
+      <div class="screen" data-testid="create-routine-screen">
+        <div class="appbar"><div class="avatar"></div><div class="wordmark">FLEXLOG</div></div>
+        <div class="body">
+          <div class="label-caps">NEW PROGRAM</div>
+          <h2 class="headline">Create Routine</h2>
+          <div class="card"><label class="field-label">Routine Name</label>
+            <input class="pill-input" data-testid="routine-name-input" value="Push Day" /></div>
+          <h3 class="section-h">Plan Targets</h3>
+          <p class="section-sub">Set your goals for today's session.</p>
+
+          <div class="plan-targets" data-testid="plan-targets-section">
+            <div class="target-card" data-testid="exercise-target-card" data-exercise-id="bench">
+              <div class="target-head"><div><div class="ex-name" data-testid="exercise-target-name">Bench Press</div><span class="chip" data-testid="exercise-target-muscle">CHEST & TRICEPS</span></div><button class="remove" data-testid="remove-exercise-btn" title="remove">✕</button></div>
+              <div class="stepper-row">
+                <div class="stepper"><span>SETS</span><div class="stepper-ctl"><button class="step-btn" data-testid="sets-decrement-btn" onclick="bump(this,-1,1)">−</button><div class="step-val" data-testid="sets-value">4</div><button class="step-btn" data-testid="sets-increment-btn" onclick="bump(this,1,1)">+</button></div></div>
+                <div class="stepper"><span>REPS</span><div class="stepper-ctl"><button class="step-btn" data-testid="reps-decrement-btn" onclick="bump(this,-1,1)">−</button><div class="step-val" data-testid="reps-value">10</div><button class="step-btn" data-testid="reps-increment-btn" onclick="bump(this,1,1)">+</button></div></div>
+                <div class="stepper"><span>KG</span><div class="stepper-ctl"><button class="step-btn" onclick="bump(this,-2.5,0)">−</button><div class="step-val">80</div><button class="step-btn" onclick="bump(this,2.5,0)">+</button></div></div>
+              </div>
+            </div>
+            <div class="target-card" data-testid="exercise-target-card" data-exercise-id="ohp">
+              <div class="target-head"><div><div class="ex-name">Overhead Press</div><span class="chip">SHOULDERS</span></div><button class="remove">✕</button></div>
+              <div class="stepper-row">
+                <div class="stepper"><span>SETS</span><div class="stepper-ctl"><button class="step-btn" onclick="bump(this,-1,1)">−</button><div class="step-val">3</div><button class="step-btn" onclick="bump(this,1,1)">+</button></div></div>
+                <div class="stepper"><span>REPS</span><div class="stepper-ctl"><button class="step-btn" onclick="bump(this,-1,1)">−</button><div class="step-val">12</div><button class="step-btn" onclick="bump(this,1,1)">+</button></div></div>
+                <div class="stepper"><span>KG</span><div class="stepper-ctl"><button class="step-btn" onclick="bump(this,-2.5,0)">−</button><div class="step-val">45</div><button class="step-btn" onclick="bump(this,2.5,0)">+</button></div></div>
+              </div>
+            </div>
+            <div class="target-card" data-testid="exercise-target-card" data-exercise-id="dips">
+              <div class="target-head"><div><div class="ex-name">Triceps Dips</div><span class="chip">ARMS</span></div><button class="remove">✕</button></div>
+              <div class="stepper-row">
+                <div class="stepper"><span>SETS</span><div class="stepper-ctl"><button class="step-btn" onclick="bump(this,-1,1)">−</button><div class="step-val">3</div><button class="step-btn" onclick="bump(this,1,1)">+</button></div></div>
+                <div class="stepper"><span>REPS</span><div class="stepper-ctl"><button class="step-btn" onclick="bump(this,-1,1)">−</button><div class="step-val">15</div><button class="step-btn" onclick="bump(this,1,1)">+</button></div></div>
+                <div class="stepper"><span>KG</span><div class="stepper-ctl"><button class="step-btn" onclick="bump(this,-2.5,0)">−</button><div class="step-val">0</div><button class="step-btn" onclick="bump(this,2.5,0)">+</button></div></div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-secondary" onclick="go(3)" style="margin-top:6px;">+ Add Exercises</button>
+          <div class="btn-row">
+            <button class="btn btn-primary" data-testid="save-routine-btn" onclick="save()">Save</button>
+            <button class="btn btn-accent" onclick="alert('→ Active Workout Logging (out of scope for this flow)')">Start</button>
+          </div>
+          <p class="hint">↑ Save persists the routine</p>
+        </div>
+      </div>
+      <nav class="tabbar"><div class="active"><i>⌂</i>Home</div><div><i>≡</i>Library</div><div><i>↻</i>History</div><div><i>⚙</i>Settings</div></nav>
+    </div>
+  </div>
+
+  <!-- ───────── STEP 5: SAVED — ROUTINES TAB ───────── -->
+  <div class="step">
+    <div class="step-label">5 · Saved Routine</div>
+    <div class="phone">
+      <div class="screen" data-testid="exercise-library-screen">
+        <div class="appbar"><div class="avatar"></div><div class="wordmark">FLEXLOG</div></div>
+        <div class="tabs">
+          <div class="tab active" data-testid="routines-tab">ROUTINES</div>
+          <div class="tab" data-testid="exercises-tab">EXERCISES</div>
+        </div>
+        <div class="body">
+          <h3 class="section-h" style="margin-top:6px;">My Saved Workouts</h3>
+          <div class="routines-list" data-testid="routines-list" style="margin-top:12px;">
+            <div class="routine-card" data-testid="routine-card" data-routine-id="push-day">
+              <h3><span data-testid="routine-card-name">Push Day</span><span class="play" data-testid="routine-card-start-btn">▶</span></h3>
+              <p class="routine-focus" data-testid="routine-card-focus">Focus: Chest, Shoulders, Triceps</p>
+              <div class="routine-stats">
+                <div class="stat"><b data-testid="routine-card-exercise-count">3</b><span>EXERCISES</span></div>
+                <div class="stat"><b data-testid="routine-card-set-count">10</b><span>TOTAL SETS</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="hint">Routine now saved & reusable 🎉</p>
+          <button class="btn btn-ghost" onclick="go(1)" style="margin-top:14px;">↺ Restart flow</button>
+        </div>
+      </div>
+      <nav class="tabbar"><div><i>⌂</i>Home</div><div class="active"><i>≡</i>Library</div><div><i>↻</i>History</div><div><i>⚙</i>Settings</div></nav>
+    </div>
+  </div>
+
+</div>
+
+<div class="legend">
+  <strong>Reading this wireframe.</strong> Five screens left→right trace the
+  "create a new routine first" flow from <code>docs/user-stories/routine-builder-*</code>.
+  Tappable elements: <em>Build Your First Workout</em> (1→2), <em>Add Exercises</em> (2→3),
+  <em>PLAN / Done</em> (3→4), <em>Save</em> (4→5). Steppers (±) and the PLAN toggles are live.
+  Colours use the Kinetic Bubble tokens from <code>docs/design.md</code>. Every element carries
+  the <code>data-testid</code> from its user story so QE selectors map 1:1.
+</div>
+
+<script>
+  // Scroll a step into view
+  function go(n){
+    const steps = document.querySelectorAll('.step');
+    if(steps[n-1]) steps[n-1].scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+  }
+  // PLAN button toggle
+  function plan(btn){
+    if(btn.classList.contains('added')){ btn.classList.remove('added'); btn.textContent='PLAN'; }
+    else { btn.classList.add('added'); btn.textContent='✓ Added'; }
+  }
+  // Stepper increment/decrement with a minimum clamp
+  function bump(btn, delta, min){
+    const val = btn.parentElement.querySelector('.step-val');
+    let n = parseFloat(val.textContent) + delta;
+    if(n < min) n = min;
+    val.textContent = Number.isInteger(n) ? n : n.toFixed(1);
+  }
+  // Save -> toast -> advance to ROUTINES tab
+  function save(){
+    const t = document.getElementById('save-toast');
+    t.classList.add('show');
+    setTimeout(()=>{ t.classList.remove('show'); go(5); }, 1100);
+  }
+</script>
+</body>
+</html>

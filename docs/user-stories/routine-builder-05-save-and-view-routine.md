@@ -2,7 +2,7 @@
 epic: routine-builder
 story: 005
 title: Save a routine and view it in the library
-status: ready
+status: done
 ---
 
 ## Story
@@ -15,7 +15,7 @@ status: ready
 
 ## Background
 
-Once exercises and targets are set on the Create Routine screen, the user taps a save/confirm action. The routine is written to IndexedDB and becomes visible in:
+Once exercises and targets are set in the build view, the user taps a save/confirm action. (Per story 006, the build view is the Create Routine state inside the Library ROUTINES tab — not a standalone screen.) On save, the draft is cleared and the ROUTINES tab returns to its saved-routines list state. The routine is written to IndexedDB and becomes visible in:
 - The "Exercise Library - Routines & Exercises" screen under the **ROUTINES** tab, showing a **Routine Card** with the routine name, focus muscle group summary, exercise count, and total sets count.
 - The **Home Dashboard** as "Today's [Routine Name]" card.
 

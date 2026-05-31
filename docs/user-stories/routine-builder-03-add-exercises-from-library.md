@@ -2,7 +2,7 @@
 epic: routine-builder
 story: 003
 title: Browse the exercise library and add exercises to a routine
-status: ready
+status: done
 ---
 
 ## Story
@@ -81,6 +81,65 @@ Then the exercise grid shows an empty state: "No exercises found"
 And the results count shows "0 Results"
 ```
 
+### Scenario 6: Exercise cards follow the bento card design
+```gherkin
+Given the user is viewing the EXERCISES tab
+Then each exercise card is rendered as a bento card:
+  - white surface, 32px corner radius, 1px #dbe5db border, 24px padding
+  - a soft green glow shadow (0px 10px 20px rgba(45,235,144,0.15))
+  - a header row with the exercise name on the left and a 40px circular expand button on the right
+  - a meta row with a rounded muscle-group chip and, when history exists, a "Last: …" hint preceded by a small icon
+  - a footer row with two filled pills ("N Sets", "N Reps") that share the row width, followed by the PLAN button
+And the layout matches the spacing and hierarchy of the Figma "Bento Card" (node 47:942)
+And no colour or spacing value is hardcoded — all come from the design tokens
+```
+
+### Scenario 7: PLAN button is tinted by muscle group
+```gherkin
+Given an exercise card is displayed
+Then its PLAN button background is tinted to the exercise's muscle-group accent
+  (e.g. green for chest/triceps, blue for back/biceps, pink for legs/core)
+And the button label colour keeps a WCAG 2.1 AA contrast ratio against that background
+And the same accent is used consistently for that muscle group across the app
+```
+
+---
+
+## Visual Design — Bento Card
+
+The bento card is the shared visual pattern for content cards across the app. Exercise
+cards (this story), the routine target cards (story 004), and the saved-routine cards
+(story 005) must all read as the same family — same radius, border, shadow, padding,
+and pill/chip treatment — differing only in their content and muscle-group accent.
+
+Reference: Figma "Bento Card 1: Bench Press (Updated Style)" — node `47:942`.
+
+| Token / property | Value (from design tokens) |
+|---|---|
+| Surface | white `#ffffff` |
+| Corner radius | 32px |
+| Border | 1px `#dbe5db` |
+| Padding | 24px |
+| Shadow (glow) | `0px 10px 20px rgba(45,235,144,0.15)` |
+| Card vertical gap | 16px between header and footer rows |
+| Exercise name | Lexend SemiBold, 24px |
+| Muscle chip | pill (full radius), green-tint bg `rgba(45,235,144,0.3)`, `#006d3e` text, 10px |
+| "Last: …" hint | 12px, `#3b4a3f`, small leading icon |
+| Expand button | 40px circle, `#edf6eb` bg |
+| Sets / Reps pills | `#edf6eb` bg, 48px radius, 48px tall, fill available width, bold 14px |
+| PLAN button | 48px tall, full radius, **muscle-group accent** bg, contrasting label |
+
+Muscle-group accents (extend as the library grows):
+
+| Group | PLAN bg | PLAN label |
+|---|---|---|
+| Chest / Triceps | `#006d3e` | `#ffffff` |
+| Back / Biceps | `#3b50fe` | `#e6e6ff` |
+| Legs / Core | `#ffbcd3` | `#ab0264` |
+
+These accents should be defined as tokens in `src/styles/main.css` so the same
+mapping is reused by any card that shows a muscle-group accent.
+
 ---
 
 ## data-testid Values
@@ -98,4 +157,5 @@ And the results count shows "0 Results"
 - `exercise-plan-btn` — "PLAN" button to add exercise to routine
 - `exercise-sets-display` — "3 Sets" pill within the card's target row
 - `exercise-reps-display` — "10 Reps" pill within the card's target row
+- `exercise-card-expand-btn` — 40px circular expand button in the card header
 - `exercise-library-empty-state` — shown when search returns no results

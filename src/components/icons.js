@@ -26,4 +26,12 @@ export const icons = {
     <path d="M10 1v2M10 17v2M1 10h2M17 10h2M3.22 3.22l1.42 1.42M15.36 15.36l1.42 1.42M3.22 16.78l1.42-1.42M15.36 4.64l1.42-1.42"
       stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
   </svg>`,
+
+  plus: `<svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+    <path d="M13 4v18M4 13h18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>`,
+
+  check: `<svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+    <path d="M5 13.5 10.5 19 21 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`,
 }

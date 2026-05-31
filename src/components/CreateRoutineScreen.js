@@ -1,5 +1,5 @@
 import '../styles/create-routine-screen.css'
-import { store } from '../utils/store.js'
+import { store, emitChange, clearDraft } from '../utils/store.js'
 import { saveRoutine } from '../utils/db.js'
 import { EXERCISES_SEED } from '../utils/exercises-seed.js'
 
@@ -9,6 +9,11 @@ function getExerciseById(id) {
 
 function formatMuscleLabel(muscleGroups) {
   return muscleGroups.map(m => m.charAt(0).toUpperCase() + m.slice(1)).join(' & ')
+}
+
+function draftHasContent() {
+  const draft = store.draftRoutine
+  return draft.name.trim().length > 0 || draft.exercises.length > 0
 }
 
 function renderExerciseTargetCard(item, index) {
@@ -76,15 +81,23 @@ function renderExerciseTargetCard(item, index) {
   `
 }
 
-function renderScreen(container) {
+function renderScreen(container, options) {
   const draft = store.draftRoutine
   const hasExercises = draft.exercises.length > 0
 
   container.innerHTML = `
     <div class="create-routine-screen" data-testid="create-routine-screen">
       <div class="create-routine__header">
-        <span class="create-routine__label">New Program</span>
-        <h1 class="create-routine__title">Create Routine</h1>
+        <button
+          class="create-routine__back"
+          data-testid="discard-routine-btn"
+          type="button"
+          aria-label="Discard routine"
+        >←</button>
+        <div class="create-routine__heading">
+          <span class="create-routine__label">New Program</span>
+          <h1 class="create-routine__title">Create Routine</h1>
+        </div>
       </div>
 
       <div class="routine-name-card">
@@ -141,10 +154,10 @@ function renderScreen(container) {
     </div>
   `
 
-  attachListeners(container)
+  attachListeners(container, options)
 }
 
-function attachListeners(container) {
+function attachListeners(container, options) {
   const draft = store.draftRoutine
 
   // Sync name input to store
@@ -156,11 +169,20 @@ function attachListeners(container) {
     container.querySelector('[data-testid="routine-name-error"]').classList.remove('routine-name-card__error--visible')
   })
 
-  // Navigate to library
+  // Discard / back control (story 008)
+  container.querySelector('[data-testid="discard-routine-btn"]').addEventListener('click', () => {
+    draft.name = nameInput.value
+    if (draftHasContent()) {
+      openDiscardDialog(container, options)
+    } else {
+      exitBuild(options)
+    }
+  })
+
+  // Switch to the EXERCISES tab to add exercises (story 006)
   container.querySelector('[data-testid="add-exercises-btn"]').addEventListener('click', () => {
     draft.name = nameInput.value
-    store.libraryTab = 'exercises'
-    location.hash = '#/library'
+    options.onGoToExercises()
   })
 
   // Stepper buttons
@@ -204,7 +226,7 @@ function attachListeners(container) {
     btn.addEventListener('click', () => {
       const i = +btn.dataset.index
       draft.exercises.splice(i, 1)
-      renderScreen(container)
+      renderScreen(container, options)
     })
   })
 
@@ -227,14 +249,86 @@ function attachListeners(container) {
       createdAt: new Date().toISOString(),
     })
 
-    store.draftRoutine = { name: '', exercises: [] }
-
+    clearDraft()
+    emitChange()
     showToast('Routine saved!')
+    options.onExitToList()
+  })
+}
 
-    setTimeout(() => {
-      store.libraryTab = 'routines'
-      location.hash = '#/library'
-    }, 1200)
+// Clear the draft and return the ROUTINES tab to its saved-list state.
+function exitBuild(options) {
+  clearDraft()
+  emitChange()
+  options.onExitToList()
+}
+
+// Discard confirmation dialog (story 008). Only shown when the draft has
+// content; accessible (focus moves in, Escape cancels, focus returns).
+function openDiscardDialog(container, options) {
+  const trigger = container.querySelector('[data-testid="discard-routine-btn"]')
+
+  const overlay = document.createElement('div')
+  overlay.className = 'discard-dialog-overlay'
+  overlay.innerHTML = `
+    <div
+      class="discard-dialog"
+      data-testid="discard-routine-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="discard-dialog-title"
+    >
+      <h2 class="discard-dialog__title" id="discard-dialog-title">Discard this routine?</h2>
+      <p class="discard-dialog__body">Your draft routine and added exercises will be lost.</p>
+      <div class="discard-dialog__actions">
+        <button class="btn discard-dialog__cancel" data-testid="discard-cancel-btn" type="button">
+          Keep editing
+        </button>
+        <button class="btn discard-dialog__confirm" data-testid="discard-confirm-btn" type="button">
+          Discard
+        </button>
+      </div>
+    </div>
+  `
+  document.body.appendChild(overlay)
+
+  const dialog = overlay.querySelector('[data-testid="discard-routine-dialog"]')
+  const cancelBtn = overlay.querySelector('[data-testid="discard-cancel-btn"]')
+  const confirmBtn = overlay.querySelector('[data-testid="discard-confirm-btn"]')
+
+  function close() {
+    overlay.removeEventListener('keydown', onKeydown)
+    overlay.remove()
+    if (trigger && document.contains(trigger)) trigger.focus()
+  }
+
+  function onKeydown(e) {
+    if (e.key === 'Escape') {
+      e.preventDefault()
+      close()
+    } else if (e.key === 'Tab') {
+      // Simple two-button focus trap.
+      e.preventDefault()
+      const next = document.activeElement === confirmBtn ? cancelBtn : confirmBtn
+      next.focus()
+    }
+  }
+
+  cancelBtn.addEventListener('click', close)
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) close()
+  })
+  confirmBtn.addEventListener('click', () => {
+    overlay.removeEventListener('keydown', onKeydown)
+    overlay.remove()
+    exitBuild(options)
+  })
+  overlay.addEventListener('keydown', onKeydown)
+
+  // Move focus into the dialog.
+  requestAnimationFrame(() => {
+    dialog.focus?.()
+    confirmBtn.focus()
   })
 }
 
@@ -252,6 +346,6 @@ function showToast(message) {
   setTimeout(() => toast.remove(), 2000)
 }
 
-export function renderCreateRoutineScreen(container) {
-  renderScreen(container)
+export function renderRoutineBuildView(container, options) {
+  renderScreen(container, options)
 }

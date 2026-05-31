@@ -147,6 +147,12 @@ Create and save reusable workout templates. Schedule sessions across the week. L
 
 **Key capability:** User arrives at the gym, taps their routine, and starts immediately — no planning required on the day.
 
+**Navigation model:** Routine building lives *inside* the Exercise Library screen's ROUTINES tab as a sub-view, rather than as a standalone screen. The ROUTINES tab toggles between the saved-routines list and a build view (name + planned exercises); adding exercises switches to the EXERCISES tab, and the user can return to the ROUTINES tab at any time to review what they've added before saving. The in-progress routine is held in app state and only committed to IndexedDB on save. A back/discard control abandons the draft (with confirmation when it has content). See user stories `routine-builder-06` and `routine-builder-08`.
+
+**Shared patterns:** Two reusable UI patterns are introduced here and reused app-wide:
+- **Bento card** — the single content-card style (white surface, 32px radius, soft green glow, muscle-group accent) shared by exercise, target, and routine cards. See `routine-builder-03`.
+- **Floating action button (FAB)** — one shared bottom-right control whose icon and action change by context (e.g. `+` to build on Home, `✓` to confirm/return when adding exercises). See `routine-builder-07`.
+
 ### Epic 6 — Progress & Trends *(v2)*
 Exercise-level strength and volume charts over time. Personal record tracking. Plateau detection. Weekly summaries. Suggested progressive overload targets.
 

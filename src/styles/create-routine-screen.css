@@ -1,5 +1,6 @@
+/* Rendered inside the Library ROUTINES tab content area (story 006), which
+   already provides the page margins — so no horizontal padding of its own. */
 .create-routine-screen {
-  padding: var(--page-margin);
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
@@ -8,6 +9,34 @@
 /* ── Screen header ── */
 
 .create-routine__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.create-routine__back {
+  flex-shrink: 0;
+  width: var(--touch-target-min);
+  height: var(--touch-target-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-container-low);
+  color: var(--color-on-surface);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.create-routine__back:active {
+  background: var(--color-surface-container-high);
+}
+
+.create-routine__heading {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -336,4 +365,73 @@
 @keyframes toast-in {
   from { transform: translateX(-50%) translateY(-16px); opacity: 0; }
   to   { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+/* ── Discard confirmation dialog (story 008) ── */
+
+.discard-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--page-margin);
+  background: rgba(21, 30, 23, 0.45);
+  animation: discard-fade-in var(--duration-fast) var(--ease-out);
+}
+
+.discard-dialog {
+  width: 100%;
+  max-width: 360px;
+  background: var(--color-surface-container-lowest);
+  border-radius: var(--radius-xl);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  box-shadow: var(--shadow-2);
+  animation: discard-pop-in var(--duration-normal) var(--ease-bounce);
+}
+
+.discard-dialog__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-headline-md-size);
+  font-weight: 700;
+  color: var(--color-on-surface);
+}
+
+.discard-dialog__body {
+  font-size: var(--text-body-md-size);
+  color: var(--color-on-surface-variant);
+}
+
+.discard-dialog__actions {
+  display: flex;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+
+.discard-dialog__actions .btn {
+  flex: 1;
+}
+
+.discard-dialog__cancel {
+  background: var(--color-surface-container-low);
+  color: var(--color-on-surface);
+}
+
+.discard-dialog__confirm {
+  background: var(--color-error);
+  color: var(--color-on-error);
+}
+
+@keyframes discard-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes discard-pop-in {
+  from { transform: scale(0.92); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
 }

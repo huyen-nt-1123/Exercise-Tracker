@@ -485,6 +485,20 @@ body {
   to   { transform: translateX(-50%) translateY(0);     opacity: 1; }
 }
 
+/* ─── Screen message (placeholder / error states) ───────────────────────── */
+
+.screen-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 60dvh;
+  padding: var(--space-4) var(--page-margin);
+  text-align: center;
+  color: var(--color-on-surface-variant);
+}
+
 /* ─── Utility ────────────────────────────────────────────────────────────── */
 
 .sr-only {

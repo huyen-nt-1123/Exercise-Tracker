@@ -389,3 +389,37 @@
   flex-direction: column;
   gap: var(--space-2);
 }
+
+/* ── ROUTINES tab views (list / build) ── */
+
+.library-routines-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.routines-empty-state {
+  border-radius: var(--radius-2xl);
+  border: 2px dashed var(--color-outline-variant);
+  background: var(--color-surface-container-low);
+  padding: var(--space-4) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  text-align: center;
+}
+
+.routines-empty-state__primary {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--text-body-lg-size);
+  color: var(--color-on-surface);
+}
+
+.routines-empty-state__secondary {
+  font-size: 0.875rem;
+  color: var(--color-on-surface-variant);
+  margin-bottom: var(--space-2);
+}
