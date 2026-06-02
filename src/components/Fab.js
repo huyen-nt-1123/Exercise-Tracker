@@ -22,6 +22,20 @@ function getContext(rerenderScreen) {
     }
   }
 
+  // Saved-routines list (story 010): start building a new routine in place.
+  if (hash.startsWith('#/library') && !store.buildingRoutine && store.libraryTab === 'routines') {
+    return {
+      icon: icons.plus,
+      label: 'Build a routine',
+      action: () => {
+        store.buildingRoutine = true
+        store.libraryTab = 'routines'
+        emitChange()
+        rerenderScreen()
+      },
+    }
+  }
+
   // Adding exercises to a draft (story 006): confirm and return to the build view.
   if (hash.startsWith('#/library') && store.buildingRoutine && store.libraryTab === 'exercises') {
     return {

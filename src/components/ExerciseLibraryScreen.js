@@ -1,8 +1,11 @@
 import '../styles/exercise-library-screen.css'
-import { getAllExercises, searchExercises, getAllRoutines } from '../utils/db.js'
+import { getAllExercises, searchExercises, getAllRoutines, deleteRoutine } from '../utils/db.js'
 import { store, emitChange } from '../utils/store.js'
 import { EXERCISES_SEED } from '../utils/exercises-seed.js'
 import { renderRoutineBuildView } from './CreateRoutineScreen.js'
+import { openConfirmDialog } from './ConfirmDialog.js'
+import { showToast } from './Toast.js'
+import { icons } from './icons.js'
 
 function chipClass(category) {
   const map = { chest: 'chest', back: 'back', legs: 'legs', shoulders: 'shoulders', arms: 'arms' }
@@ -85,10 +88,23 @@ function renderRoutineCard(routine) {
       data-routine-id="${routine.id}"
     >
       <div class="routine-card__top">
-        <div class="routine-card__info">
+        <button
+          class="routine-card__open"
+          data-testid="routine-card-open"
+          data-routine-id="${routine.id}"
+          type="button"
+          aria-label="Open ${routine.name}"
+        >
           <span class="routine-card__name" data-testid="routine-card-name">${routine.name}</span>
           <span class="routine-card__focus" data-testid="routine-card-focus">Focus: ${focus}</span>
-        </div>
+        </button>
+        <button
+          class="routine-card__delete"
+          data-testid="routine-card-delete-btn"
+          data-routine-id="${routine.id}"
+          type="button"
+          aria-label="Delete ${routine.name}"
+        >${icons.delete}</button>
       </div>
       <div class="routine-card__bottom">
         <div class="routine-card__stats">
@@ -222,6 +238,52 @@ async function renderRoutinesTab(content, switchTab) {
   content.querySelectorAll('[data-testid="routine-card-start-btn"]').forEach(btn => {
     btn.addEventListener('click', () => {
       location.hash = '#/'
+    })
+  })
+
+  // Tap a card to open it in the build view, pre-loaded for editing (story 009).
+  content.querySelectorAll('[data-testid="routine-card-open"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const routine = routines.find(r => r.id === btn.dataset.routineId)
+      if (!routine) return
+      store.draftRoutine = {
+        id: routine.id,
+        createdAt: routine.createdAt ?? null,
+        name: routine.name,
+        exercises: routine.exercises.map(e => ({
+          exerciseId: e.exerciseId,
+          sets: e.sets,
+          reps: e.reps,
+        })),
+        showNameError: false,
+      }
+      store.buildingRoutine = true
+      emitChange()
+      switchTab('routines')
+    })
+  })
+
+  // Delete a routine from the card, with confirmation (story 011).
+  content.querySelectorAll('[data-testid="routine-card-delete-btn"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const routine = routines.find(r => r.id === btn.dataset.routineId)
+      if (!routine) return
+      openConfirmDialog({
+        title: 'Delete this routine?',
+        body: `${routine.name} will be permanently removed.`,
+        confirmLabel: 'Delete',
+        cancelLabel: 'Cancel',
+        dialogTestId: 'delete-routine-dialog',
+        confirmTestId: 'delete-confirm-btn',
+        cancelTestId: 'delete-cancel-btn',
+        trigger: btn,
+        onConfirm: async () => {
+          await deleteRoutine(routine.id)
+          emitChange()
+          showToast('Routine deleted')
+          switchTab('routines')
+        },
+      })
     })
   })
 

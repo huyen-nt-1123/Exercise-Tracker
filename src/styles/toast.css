@@ -1,0 +1,27 @@
+/* ── Transient confirmation toast (shared: save / delete) ── */
+
+.save-success-toast {
+  position: fixed;
+  top: calc(var(--space-2) + env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 12px var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-family: var(--font-heading);
+  font-size: var(--text-label-caps-size);
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: var(--shadow-2);
+  z-index: 200;
+  animation: toast-in var(--duration-normal) var(--ease-bounce);
+}
+
+@keyframes toast-in {
+  from { transform: translateX(-50%) translateY(-16px); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(0); opacity: 1; }
+}

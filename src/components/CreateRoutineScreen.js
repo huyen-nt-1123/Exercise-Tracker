@@ -1,7 +1,9 @@
 import '../styles/create-routine-screen.css'
 import { store, emitChange, clearDraft } from '../utils/store.js'
-import { saveRoutine } from '../utils/db.js'
+import { saveRoutine, deleteRoutine } from '../utils/db.js'
 import { EXERCISES_SEED } from '../utils/exercises-seed.js'
+import { openConfirmDialog } from './ConfirmDialog.js'
+import { showToast } from './Toast.js'
 
 function getExerciseById(id) {
   return EXERCISES_SEED.find(e => e.id === id)
@@ -84,6 +86,7 @@ function renderExerciseTargetCard(item, index) {
 function renderScreen(container, options) {
   const draft = store.draftRoutine
   const hasExercises = draft.exercises.length > 0
+  const isEditing = draft.id != null
 
   container.innerHTML = `
     <div class="create-routine-screen" data-testid="create-routine-screen">
@@ -92,11 +95,11 @@ function renderScreen(container, options) {
           class="create-routine__back"
           data-testid="discard-routine-btn"
           type="button"
-          aria-label="Discard routine"
+          aria-label="${isEditing ? 'Back' : 'Discard routine'}"
         >←</button>
         <div class="create-routine__heading">
-          <span class="create-routine__label">New Program</span>
-          <h1 class="create-routine__title">Create Routine</h1>
+          <span class="create-routine__label">${isEditing ? 'Edit Program' : 'New Program'}</span>
+          <h1 class="create-routine__title">${isEditing ? 'Edit Routine' : 'Create Routine'}</h1>
         </div>
       </div>
 
@@ -148,8 +151,13 @@ function renderScreen(container, options) {
           data-testid="save-routine-btn"
           ${hasExercises ? '' : 'disabled style="width: 100%; opacity: 0.5; cursor: not-allowed"'}
         >
-          Save Routine
+          ${isEditing ? 'Save Changes' : 'Save Routine'}
         </button>
+        ${isEditing ? `
+          <button class="delete-routine-btn" data-testid="delete-routine-btn" type="button">
+            Delete Routine
+          </button>
+        ` : ''}
       </div>
     </div>
   `
@@ -242,18 +250,44 @@ function attachListeners(container, options) {
     }
     if (draft.exercises.length === 0) return
 
+    const isEditing = draft.id != null
+
     await saveRoutine({
-      id: crypto.randomUUID(),
+      id: draft.id ?? crypto.randomUUID(),
       name: draft.name,
       exercises: draft.exercises.map(e => ({ exerciseId: e.exerciseId, sets: e.sets, reps: e.reps, weight: null })),
-      createdAt: new Date().toISOString(),
+      createdAt: draft.createdAt ?? new Date().toISOString(),
     })
 
     clearDraft()
     emitChange()
-    showToast('Routine saved!')
+    showToast(isEditing ? 'Changes saved!' : 'Routine saved!')
     options.onExitToList()
   })
+
+  // Delete (edit mode only, story 011)
+  const deleteBtn = container.querySelector('[data-testid="delete-routine-btn"]')
+  if (deleteBtn) {
+    deleteBtn.addEventListener('click', () => {
+      openConfirmDialog({
+        title: 'Delete this routine?',
+        body: `${draft.name || 'This routine'} will be permanently removed.`,
+        confirmLabel: 'Delete',
+        cancelLabel: 'Cancel',
+        dialogTestId: 'delete-routine-dialog',
+        confirmTestId: 'delete-confirm-btn',
+        cancelTestId: 'delete-cancel-btn',
+        trigger: deleteBtn,
+        onConfirm: async () => {
+          await deleteRoutine(draft.id)
+          clearDraft()
+          emitChange()
+          showToast('Routine deleted')
+          options.onExitToList()
+        },
+      })
+    })
+  }
 }
 
 // Clear the draft and return the ROUTINES tab to its saved-list state.
@@ -263,87 +297,24 @@ function exitBuild(options) {
   options.onExitToList()
 }
 
-// Discard confirmation dialog (story 008). Only shown when the draft has
-// content; accessible (focus moves in, Escape cancels, focus returns).
+// Discard confirmation dialog. Only shown when the draft has content; copy
+// adapts to whether a new routine is being created (story 008) or an existing
+// one is being edited (story 009 — the routine itself is not removed).
 function openDiscardDialog(container, options) {
-  const trigger = container.querySelector('[data-testid="discard-routine-btn"]')
-
-  const overlay = document.createElement('div')
-  overlay.className = 'discard-dialog-overlay'
-  overlay.innerHTML = `
-    <div
-      class="discard-dialog"
-      data-testid="discard-routine-dialog"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="discard-dialog-title"
-    >
-      <h2 class="discard-dialog__title" id="discard-dialog-title">Discard this routine?</h2>
-      <p class="discard-dialog__body">Your draft routine and added exercises will be lost.</p>
-      <div class="discard-dialog__actions">
-        <button class="btn discard-dialog__cancel" data-testid="discard-cancel-btn" type="button">
-          Keep editing
-        </button>
-        <button class="btn discard-dialog__confirm" data-testid="discard-confirm-btn" type="button">
-          Discard
-        </button>
-      </div>
-    </div>
-  `
-  document.body.appendChild(overlay)
-
-  const dialog = overlay.querySelector('[data-testid="discard-routine-dialog"]')
-  const cancelBtn = overlay.querySelector('[data-testid="discard-cancel-btn"]')
-  const confirmBtn = overlay.querySelector('[data-testid="discard-confirm-btn"]')
-
-  function close() {
-    overlay.removeEventListener('keydown', onKeydown)
-    overlay.remove()
-    if (trigger && document.contains(trigger)) trigger.focus()
-  }
-
-  function onKeydown(e) {
-    if (e.key === 'Escape') {
-      e.preventDefault()
-      close()
-    } else if (e.key === 'Tab') {
-      // Simple two-button focus trap.
-      e.preventDefault()
-      const next = document.activeElement === confirmBtn ? cancelBtn : confirmBtn
-      next.focus()
-    }
-  }
-
-  cancelBtn.addEventListener('click', close)
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) close()
+  const isEditing = store.draftRoutine.id != null
+  openConfirmDialog({
+    title: isEditing ? 'Discard changes?' : 'Discard this routine?',
+    body: isEditing
+      ? 'Your unsaved changes will be lost.'
+      : 'Your draft routine and added exercises will be lost.',
+    confirmLabel: 'Discard',
+    cancelLabel: 'Keep editing',
+    dialogTestId: 'discard-routine-dialog',
+    confirmTestId: 'discard-confirm-btn',
+    cancelTestId: 'discard-cancel-btn',
+    trigger: container.querySelector('[data-testid="discard-routine-btn"]'),
+    onConfirm: () => exitBuild(options),
   })
-  confirmBtn.addEventListener('click', () => {
-    overlay.removeEventListener('keydown', onKeydown)
-    overlay.remove()
-    exitBuild(options)
-  })
-  overlay.addEventListener('keydown', onKeydown)
-
-  // Move focus into the dialog.
-  requestAnimationFrame(() => {
-    dialog.focus?.()
-    confirmBtn.focus()
-  })
-}
-
-function showToast(message) {
-  const existing = document.querySelector('[data-testid="save-routine-success-toast"]')
-  if (existing) existing.remove()
-
-  const toast = document.createElement('div')
-  toast.className = 'save-success-toast'
-  toast.setAttribute('data-testid', 'save-routine-success-toast')
-  toast.setAttribute('role', 'status')
-  toast.textContent = message
-  document.body.appendChild(toast)
-
-  setTimeout(() => toast.remove(), 2000)
 }
 
 export function renderRoutineBuildView(container, options) {

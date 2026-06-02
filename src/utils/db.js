@@ -43,3 +43,8 @@ export async function getAllRoutines() {
   const db = await getDb()
   return db.getAll('routines')
 }
+
+export async function deleteRoutine(id) {
+  const db = await getDb()
+  return db.delete('routines', id)
+}

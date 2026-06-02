@@ -34,4 +34,11 @@ export const icons = {
   check: `<svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
     <path d="M5 13.5 10.5 19 21 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>`,
+
+  delete: `<svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+    <path d="M10 4h6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M4 7h18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M6 7l1.5 14h11L20 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M10.5 11v7M15.5 11v7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </svg>`,
 }

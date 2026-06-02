@@ -306,10 +306,41 @@
   gap: var(--space-1);
 }
 
-.routine-card__info {
+.routine-card__open {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 4px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.routine-card__delete {
+  flex-shrink: 0;
+  width: var(--touch-target-min);
+  height: var(--touch-target-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-on-surface-variant);
+  font-size: 1.125rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.routine-card__delete:active {
+  background: var(--color-surface-container-high);
 }
 
 .routine-card__name {
