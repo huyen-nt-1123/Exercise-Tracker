@@ -1,3 +1,4 @@
+// AI citation: I designed the functions and direction of this file; Claude Code (Anthropic) helped me write the code.
 import './styles/main.css'
 import { renderAppHeader } from './components/AppHeader.js'
 import { renderBottomNav } from './components/BottomNav.js'
@@ -64,7 +65,7 @@ async function navigate(hash) {
     main.innerHTML = `
       <section class="screen-message" data-testid="screen-error" role="alert">
         <p class="text-headline">Something went wrong</p>
-        <p>This screen couldn't be loaded. Check your connection and try again.</p>
+        <p>This screen couldn't be loaded. Please try again.</p>
         <button class="btn btn-primary" data-testid="retry-button">Retry</button>
       </section>
     `

@@ -1,3 +1,4 @@
+// AI citation: I designed the functions and direction of this file; Claude Code (Anthropic) helped me write the code.
 import '../styles/exercise-library-screen.css'
 import { getAllExercises, searchExercises, getAllRoutines, deleteRoutine } from '../utils/db.js'
 import { store, emitChange } from '../utils/store.js'
@@ -43,26 +44,27 @@ function renderExerciseCard(exercise, isAdded) {
       data-testid="exercise-card"
       data-exercise-id="${exercise.id}"
     >
-      <div class="exercise-card__header">
-        <div class="exercise-card__info">
-          <span class="exercise-card__name" data-testid="exercise-name">${exercise.name}</span>
-          <div class="exercise-card__meta">
-            <span class="${chipClass(exercise.category)}" data-testid="exercise-muscle-chip">
-              ${muscleChipLabel(exercise.muscleGroups)}
-            </span>
-            ${exercise.lastPerformance ? `
-              <span class="exercise-card__last-hint" data-testid="exercise-last-hint">
-                Last: ${exercise.lastPerformance}
-              </span>
-            ` : ''}
-          </div>
-        </div>
-        <button class="exercise-card__expand" aria-hidden="true" tabindex="-1">+</button>
+      <span class="exercise-card__name" data-testid="exercise-name">${exercise.name}</span>
+      <div class="exercise-card__meta">
+        <span class="${chipClass(exercise.category)}" data-testid="exercise-muscle-chip">
+          ${muscleChipLabel(exercise.muscleGroups)}
+        </span>
+        ${exercise.lastPerformance ? `
+          <span class="exercise-card__last-hint" data-testid="exercise-last-hint">
+            ${icons.history} Last: ${exercise.lastPerformance}
+          </span>
+        ` : ''}
       </div>
-      <div class="exercise-card__footer">
+      <div class="exercise-card__actions">
         <div class="exercise-card__pills">
-          <span class="exercise-pill" data-testid="exercise-sets-display">3 Sets</span>
-          <span class="exercise-pill" data-testid="exercise-reps-display">10 Reps</span>
+          <div class="routine-stat-badge" data-testid="exercise-sets-display">
+            <span class="routine-stat-badge__number">3</span>
+            <span class="routine-stat-badge__label">Sets</span>
+          </div>
+          <div class="routine-stat-badge" data-testid="exercise-reps-display">
+            <span class="routine-stat-badge__number">10</span>
+            <span class="routine-stat-badge__label">Reps</span>
+          </div>
         </div>
         <button
           class="${planBtnClass(exercise.category)}${added ? ' exercise-plan-btn--added' : ''}"

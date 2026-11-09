@@ -1,3 +1,4 @@
+// AI citation: I designed the functions and direction of this file; Claude Code (Anthropic) helped me write the code.
 import '../styles/toast.css'
 
 // Transient top-of-screen confirmation toast. Shared across flows (save routine,

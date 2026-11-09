@@ -1,3 +1,4 @@
+// AI citation: I designed the functions and direction of this file; Claude Code (Anthropic) helped me write the code.
 // Simple observable app state. Components mutate `store` directly, then call
 // emitChange() so subscribers (e.g. the shared FAB) can react to changes that
 // don't go through the router — like switching Library tabs or entering build

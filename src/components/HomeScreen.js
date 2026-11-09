@@ -1,3 +1,4 @@
+// AI citation: I designed the functions and direction of this file; Claude Code (Anthropic) helped me write the code.
 import '../styles/home-screen.css'
 import { getAllRoutines } from '../utils/db.js'
 import { store } from '../utils/store.js'

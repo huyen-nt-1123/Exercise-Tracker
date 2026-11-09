@@ -1,3 +1,4 @@
+// AI citation: I designed the functions and direction of this file; Claude Code (Anthropic) helped me write the code.
 import '../styles/fab.css'
 import { icons } from './icons.js'
 import { store, subscribe, emitChange } from '../utils/store.js'

@@ -1,3 +1,4 @@
+// AI citation: I designed the functions and direction of this file; Claude Code (Anthropic) helped me write the code.
 import '../styles/create-routine-screen.css'
 import { store, emitChange, clearDraft } from '../utils/store.js'
 import { saveRoutine, deleteRoutine } from '../utils/db.js'

@@ -1,3 +1,4 @@
+// AI citation: I designed the functions and direction of this file; Claude Code (Anthropic) helped me write the code.
 export const EXERCISES_SEED = [
   // Chest
   { id: 'ex-chest-01', name: 'Barbell Bench Press', muscleGroups: ['chest', 'triceps'], category: 'chest' },

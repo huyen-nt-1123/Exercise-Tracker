@@ -1,3 +1,4 @@
+// AI citation: I designed the functions and direction of this file; Claude Code (Anthropic) helped me write the code.
 import '../styles/confirm-dialog.css'
 
 // Shared accessible confirmation dialog (focus moves in, two-button focus trap,

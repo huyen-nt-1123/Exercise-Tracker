@@ -1,3 +1,4 @@
+// AI citation: I designed the functions and direction of this file; Claude Code (Anthropic) helped me write the code.
 export const icons = {
   bell: `<svg width="16" height="20" viewBox="0 0 16 20" fill="none" aria-hidden="true">
     <path d="M8 1a1 1 0 0 1 1 1v.6A6 6 0 0 1 14 8.5V13l1.5 1.5V16H.5v-1.5L2 13V8.5A6 6 0 0 1 7 2.6V2a1 1 0 0 1 1-1Z"
@@ -35,7 +36,7 @@ export const icons = {
     <path d="M5 13.5 10.5 19 21 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>`,
 
-  delete: `<svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+  delete: `<svg width="22" height="22" viewBox="0 0 26 26" fill="none" aria-hidden="true">
     <path d="M10 4h6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
     <path d="M4 7h18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
     <path d="M6 7l1.5 14h11L20 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>

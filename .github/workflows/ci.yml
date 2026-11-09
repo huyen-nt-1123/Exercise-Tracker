@@ -1,0 +1,96 @@
+# CI pipeline: build the app, run Playwright tests, then check the Docker image builds.
+name: CI
+
+# When to run: every push to any branch, and every PR targeting main.
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+# If you push twice quickly, cancel the older run on the same branch to save minutes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Least privilege: this workflow only needs to read the repo.
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm # caches ~/.npm keyed on package-lock.json
+
+      - name: Install dependencies
+        run: npm ci # clean, exact install from package-lock.json
+
+      - name: Build
+        run: npm run build
+
+      # Browsers are big, so cache them keyed on the Playwright version.
+      - name: Get Playwright version
+        id: pw
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: pw-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+
+      - name: Install Playwright browsers
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright system deps (cache hit)
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      # CI=true is set automatically by GitHub, so playwright.config.js turns on
+      # retries, forbidOnly, and starts a fresh dev server.
+      # --pass-with-no-tests: tests/e2e is empty for now; remove once QE adds tests.
+      - name: Run Playwright tests
+        run: npx playwright test --pass-with-no-tests
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }} # upload even when tests fail — that's when you need it
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+          if-no-files-found: ignore
+
+  docker:
+    needs: build-and-test # only build the image if the app builds and tests pass
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t exercise-tracker:ci .
+
+      - name: Smoke test container
+        run: |
+          docker run -d --name app -p 8080:8080 exercise-tracker:ci
+          # Wait for nginx, then fail the step if the page or service worker isn't served.
+          for i in $(seq 1 10); do curl -fsS http://localhost:8080/ > /dev/null && break; sleep 1; done
+          curl -fsS http://localhost:8080/ | grep -q 'data-testid="app-root"'
+          curl -fsS -o /dev/null http://localhost:8080/sw.js
+          curl -fsS -o /dev/null http://localhost:8080/manifest.webmanifest
+
+      - name: Show container logs
+        if: ${{ always() }}
+        run: docker logs app

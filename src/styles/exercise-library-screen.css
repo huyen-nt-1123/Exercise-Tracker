@@ -1,3 +1,4 @@
+/* AI citation: I designed the functions and direction of this file; Claude Code (Anthropic) helped me write the code. */
 .exercise-library-screen {
   display: flex;
   flex-direction: column;
@@ -133,34 +134,19 @@
   background: var(--color-surface-container-lowest);
   border-radius: var(--radius-2xl);
   border: 1px solid var(--color-outline-variant);
-  overflow: hidden;
   box-shadow: var(--shadow-1);
-}
-
-.exercise-card__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: var(--space-2) var(--space-2) var(--space-1);
-  gap: var(--space-1);
-}
-
-.exercise-card__info {
+  padding: var(--space-2);
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  flex: 1;
-  min-width: 0;
+  gap: 10px;
 }
 
 .exercise-card__name {
   font-family: var(--font-heading);
   font-weight: 700;
-  font-size: var(--text-body-lg-size);
+  font-size: 1.125rem;
+  line-height: 1.2;
   color: var(--color-on-surface);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .exercise-card__meta {
@@ -190,33 +176,25 @@
 .exercise-muscle-chip--default  { background: var(--color-surface-container-high); color: var(--color-on-surface-variant); }
 
 .exercise-card__last-hint {
-  font-size: 0.75rem;
-  color: var(--color-on-surface-variant);
-}
-
-.exercise-card__expand {
-  background: var(--color-surface-container-low);
-  border: none;
-  border-radius: var(--radius-full);
-  width: 32px;
-  height: 32px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
+  gap: 4px;
+  font-size: 0.875rem;
   color: var(--color-on-surface-variant);
-  font-size: 1rem;
-  flex-shrink: 0;
-  -webkit-tap-highlight-color: transparent;
 }
 
-/* ── Exercise card footer ── */
+.exercise-card__last-hint svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
 
-.exercise-card__footer {
+/* ── Exercise card actions row ── */
+
+.exercise-card__actions {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-1) var(--space-2) var(--space-2);
   gap: var(--space-1);
 }
 
@@ -225,22 +203,12 @@
   gap: 8px;
 }
 
-.exercise-pill {
-  background: var(--color-surface-container-low);
-  border-radius: var(--radius-2xl);
-  padding: 6px 12px;
-  font-family: var(--font-heading);
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--color-on-surface);
-}
-
 .exercise-plan-btn {
-  padding: 8px 20px;
+  padding: 12px 24px;
   border: none;
   border-radius: var(--radius-2xl);
   font-family: var(--font-heading);
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -251,12 +219,12 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.exercise-plan-btn--chest    { background: var(--color-primary); color: var(--color-on-primary); }
-.exercise-plan-btn--back     { background: var(--color-secondary-container); color: var(--color-on-secondary); }
-.exercise-plan-btn--legs     { background: var(--color-tertiary-container); color: var(--color-on-tertiary-container); }
-.exercise-plan-btn--shoulders { background: var(--color-primary); color: var(--color-on-primary); }
-.exercise-plan-btn--arms     { background: var(--color-primary); color: var(--color-on-primary); }
-.exercise-plan-btn--default  { background: var(--color-primary); color: var(--color-on-primary); }
+.exercise-plan-btn--chest,
+.exercise-plan-btn--back,
+.exercise-plan-btn--legs,
+.exercise-plan-btn--shoulders,
+.exercise-plan-btn--arms,
+.exercise-plan-btn--default { background: var(--color-primary); color: var(--color-on-primary); }
 
 .exercise-plan-btn:active {
   transform: scale(0.94);
@@ -323,16 +291,16 @@
 
 .routine-card__delete {
   flex-shrink: 0;
-  width: var(--touch-target-min);
-  height: var(--touch-target-min);
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
   border-radius: var(--radius-full);
-  background: transparent;
+  background: var(--color-surface-container-low);
   color: var(--color-on-surface-variant);
-  font-size: 1.125rem;
+  font-size: 1rem;
   line-height: 1;
   cursor: pointer;
   transition: background var(--duration-fast) var(--ease-out);
